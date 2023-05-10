@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Mapbox Isochrone API Demo</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id='map'></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZmdlb3JhbmthIiwiYSI6ImNsaDZpYnRndDA2Z3AzcW5zN3Z6eXpkdnUifQ.zCGgF9WHj4NraRMnm_q0lg';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [15.980363, 45.813372], // Zagreb, Croatia
+        zoom: 13
+    });
+
+    var markers = [];
+    var titles = ['title 1', 'title 2', 'title 3', 'title 4'];
+    var destinations = [
+[15.879493,45.685362, 'Jagodnjak'],
+[15.936911,45.705660, 'Igralište Odranski obrež - Krčevine'],
+[15.908916,45.730176, 'Dvorac Brezovica'],
+[15.995446,45.764245, 'Škola Dugave'],
+[15.986473,45.765868, 'OŠ Otok'],
+[15.976451,45.769039, 'Podbrežje'],
+[16.019128,45.770841, 'Sajam automobila Jakuševac'],
+[15.997538,45.771129, 'Park Travno'],
+[15.966872,45.776155, 'Park Mladenaca'],
+[15.993019,45.776222, 'Igralište Prva Gimnazija'],
+[15.947598,45.777811, 'Parkiralište Interspar / McDonalds'],
+[15.979171,45.780326, 'Zagrebački Velesajam'],
+[15.913687,45.785506, 'ŠRC Jarun'],
+[15.943031,45.783445, 'ŠRC Mladost'],
+[15.981415,45.784290, 'Bundek'],
+[15.974320,45.784933, 'Hipodrom'],
+[15.944790,45.784993, 'Kineziološki fakultet'],
+[15.901988,45.784754, 'Vodoprivreda'],
+[16.002205,45.788762, 'NK Posavina'],
+[15.961643,45.789696, 'Boćarski dom'],
+[15.892347,45.793904, 'Okretište tramvaja Prečko'],
+[15.889574,45.793641, 'Savska opatovina'],
+[16.013885,45.794670, 'Nogometno igralište NK ZET'],
+[15.908266,45.796069, 'Križanje Petrovaradinske i Zagrebačke avenije'],
+[15.994686,45.799138, 'ŠRC Trnje'],
+[16.014041,45.801927, 'Parkiralište Lidl'],
+[15.921653,45.802557, 'Rudeš'],
+[15.960525,45.804005, 'Stadion Kranjčevićeva'],
+[16.033017,45.800298, 'ŠRC Peščenica'],
+[15.945494,45.805308, 'Park Ciglenica'],
+[15.882182,45.806934, 'samoborska cesta'],
+[15.978679,45.806353, 'Trg kralja Tomislava'],
+[15.953249,45.807895, 'Trg Sportova'],
+[15.965301,45.808942, 'Srednjoškolsko igralište Klaićeva'],
+[16.102227,45.809421, 'Jelkovec'],
+[15.978249,45.810478, 'Park Zrinjevac'],
+[15.956187,45.811707, 'Trg Franje Tuđmana'],
+[16.042780,45.812343, 'Studentski kampus Borongaj'],
+[15.897613,45.816398, 'Bolnica Vrapče'],
+[16.018621,45.814338, 'Okretište tramvaja Borongaj'],
+[15.973749,45.814792, 'Trg Sv. Katarine'],
+[15.880565,45.815010, 'Ponikve'],
+[15.872928,45.817107, 'Super Konzum Gajnice'],
+[15.933405,45.816384, 'Parkiralište Super Konzum Črnomerec'],
+[15.972026,45.818816, 'Tuškanac'],
+[15.973605,45.816210, 'Trg  Sv. Marka'],
+[16.015935,45.817673, 'ŠRC Svetice'],
+[16.037423,45.817426, 'Parking ispred centra Kaufland - Branimirova'],
+[15.944634,45.818189, 'Šestinski dol 23'],
+[16.080615,45.820372, 'Dubrava'],
+[15.975107,45.819254, 'Ilirski Trg'],
+[16.078633,45.824573, 'Parking ispred Interspara'],
+[16.033109,45.819139, 'ŠRC Ravnice'],
+[16.06344,45.82157, 'Parking Interspar'],
+[16.110020,45.825232, 'Parkiralište kod Željezničkog kolodvora Sesvete'],
+[16.035842,45.834416, 'Nova Bolnica'],
+[16.020917,45.824553, 'Park Maksimir'],
+[16.043439,45.831068, 'OŠ Ante Starčević'],
+[15.971823,45.835589, 'Cmrok'],
+[16.105817,45.830356, 'OŠ Luka/Sesvete'],
+[16.054298,45.837575, 'ŠRC Klaka'],
+[16.051565,45.854764, 'Grad Mladih'],
+[15.974973,45.841672, 'Okretište tramvaja Mihaljevac'],
+[15.989887,45.851331, 'Crkva Majke Božje Remetske'],
+[15.952763,45.852986, 'Šestine'],
+[15.982699,45.862346, 'Tunel - Gračanska cesta'],
+[16.013712,45.874718, 'OŠ Markuševac']
+    ];
+
+    // Add a marker for each destination
+    for (var i = 0; i < destinations.length; i++) {
+        var marker = new mapboxgl.Marker()
+            .setLngLat(destinations[i])
+            .setPopup(new mapboxgl.Popup().setHTML('<h3>' + titles[i] + '</h3>'))
+            .addTo(map);
+        markers.push(marker);
+    }
+
+    // Add a marker for each destination
+for (var i = 0; i < destinations.length; i++) {
+    var marker = new mapboxgl.Marker()
+        .setLngLat(destinations[i])
+        .setPopup(new mapboxgl.Popup()
+            .setHTML('<h3>' + titles[i] + '</h3>' + '<p>' + '<strong>' + titles[i] + '</strong>' + '</p>'))
+        .addTo(map);
+    markers.push(marker);
+}
+for (var i = 0; i < destinations.length; i++) {
+var marker = new mapboxgl.Marker()
+    .setLngLat(destinations[i].slice(0, 2))
+    .setPopup(new mapboxgl.Popup().setHTML('<h3>' + destinations[i][2] + '</h3>'))
+    .addTo(map);
+}
+    // Add click event listener to the map
+    map.on('click', function (e) {
+        var lngLat = e.lngLat;
+        var url = 'https://api.mapbox.com/isochrone/v1/mapbox/walking/' +
+            lngLat.lng + ',' + lngLat.lat +
+            '?contours_minutes=10,15,20' +
+            '&polygons=true&access_token=' + mapboxgl.accessToken;
+
+        // Request isochrone data from Mapbox API
+        fetch(url)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                // Remove existing isochrone layers
+                map.getStyle().layers.forEach(function (layer) {
+                    if (layer.id.indexOf('isochrone') !== -1) {
+                        map.removeLayer(layer.id);
+                        map.removeSource(layer.id);
+                    }
+                });
+
+                // Add new isochrone layers for each contour
+                for (var i = 0; i < data.features.length; i++) {
+                    var feature = data.features[i];
+                    var layerId = 'isochrone-' + i;
+                    var fillColor = i === 0 ? '#fbb03b' : i === 1 ? '#223b53' : i === 2 ? '#e55e5e' : '#3bb2d0';
+                    var lineColor = i === 0 ? '#fbb03b' : i === 1 ? '#223b53' : i === 2 ? '#e55e5e' : '#3bb2d0';
+
+                    var lineId = 'isochrone-line-' + i;
+                    map.addLayer({
+                        'id': layerId,
+                        'type': 'fill',
+                        'source': {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'Feature',
+                                'geometry': feature.geometry
+                            }
+                        },
+                        'layout': {},
+                        'paint': {
+                            'fill-color': fillColor,
+                            'fill-opacity': 0.3
+                        }
+                    });
+
+                    map.addLayer({
+                        'id': lineId,
+                        'type': 'line',
+                        'source': {
+                            'type': 'geojson',
+                            'data': {
+                                'type': 'Feature',
+                                'geometry': feature.geometry
+                            }
+                        },
+                        'layout': {},
+                        'paint': {
+                            'line-color': lineColor,
+                            'line-width': 2
+                        }
+                    });
+                }
+            });
+    });
+</script>
+</body>
+</html>
